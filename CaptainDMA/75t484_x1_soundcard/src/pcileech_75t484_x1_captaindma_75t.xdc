@@ -113,3 +113,12 @@ set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
 set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design]
 set_property BITSTREAM.CONFIG.CONFIGRATE 66 [current_design]
+
+# Workaround: Vivado PCIe 7x IP (v3.3) bug with Class Code = 040300 (Multimedia/Audio).
+# Class code 040300 has three '1' bits (bits 8, 9, 18 of the 24-bit value), so Vivado
+# synthesis generates three LUT1 constant-driver cells inside the PCIe IP wrapper.
+# opt_design's logic trimming then incorrectly removes the I0 connection of the second
+# LUT1 (pcie_block_i_i_1), causing a fatal Opt 31-67 netlist connectivity error.
+# Class code 020000 (Network/Ethernet) only has one '1' bit and does not exhibit this bug.
+# Setting DONT_TOUCH prevents opt_design from modifying this cell.
+set_property DONT_TOUCH true [get_cells -quiet {i_pcileech_pcie_a7/i_pcie_7x_0/inst/inst/pcie_top_i/pcie_7x_i/pcie_block_i_i_1}]
