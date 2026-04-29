@@ -113,9 +113,3 @@ set_property BITSTREAM.CONFIG.SPI_BUSWIDTH 4 [current_design]
 set_property BITSTREAM.GENERAL.COMPRESS TRUE [current_design]
 set_property BITSTREAM.CONFIG.SPI_FALL_EDGE YES [current_design]
 set_property BITSTREAM.CONFIG.CONFIGRATE 66 [current_design]
-
-# Workaround for Vivado [Opt 31-67]: LUT1 missing input connection inside Xilinx PCIe 7x IP core.
-# This is a known Vivado bug triggered by certain class codes (e.g. 040300 Multimedia/Audio).
-# Vivado constant-propagation removes the driver of pcie_block_i_i_1's I0 pin during synthesis,
-# which is flagged as an error in opt_design. The PCIe hard block itself is unaffected.
-set_msg_config -id {Opt 31-67} -new_severity {WARNING}
